@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/cardViewDt1"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_marginBottom="5dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginTop="10dp"
+        android:elevation="10dp"
+        card_view:cardCornerRadius="2dp">
+
+        <FrameLayout
+            android:id="@+id/TimetableView"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent">
+
+            <ExpandableListView
+                android:id="@+id/expandableListView"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:choiceMode="none"
+                android:divider="@null"
+                android:dividerHeight="1dp"
+                android:listSelector="@android:color/transparent" />
+
+        </FrameLayout>
+
+    </android.support.v7.widget.CardView>
+
+</LinearLayout>
