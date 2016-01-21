@@ -224,10 +224,10 @@ public class DisplayLocation extends Fragment {
     void createListView(String text) {
         //  アイコンの設定
         Bitmap busStopImage, kenkoBusImage, kenhokuBusImage, otherBusImage;
-        busStopImage = BitmapFactory.decodeResource(getResources(), R.drawable.bus_stop_location_mode);
-        kenkoBusImage = BitmapFactory.decodeResource(getResources(), R.drawable.kenko_bus);
-        kenhokuBusImage = BitmapFactory.decodeResource(getResources(), R.drawable.kenhoku_bus);
-        otherBusImage = BitmapFactory.decodeResource(getResources(), R.drawable.other_bus);
+        busStopImage = BitmapFactory.decodeResource(getResources(), R.mipmap.bus_stop_location_mode);
+        kenkoBusImage = BitmapFactory.decodeResource(getResources(), R.mipmap.kenko_bus);
+        kenhokuBusImage = BitmapFactory.decodeResource(getResources(), R.mipmap.kenhoku_bus);
+        otherBusImage = BitmapFactory.decodeResource(getResources(), R.mipmap.other_bus);
 
         //  データの作成
         List<CustomData> objects = new ArrayList<CustomData>();

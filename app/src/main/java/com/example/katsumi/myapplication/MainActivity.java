@@ -61,18 +61,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         }
     }
 
-   /* @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        return id == R.id.action_settings || super.onOptionsItemSelected(item);
-    }*/
-
     @Override
     public void onClick(View v) {
         menuClickEvent(v);
@@ -192,7 +180,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         MODE = INPUT_SELECTION_MODE;
 
         //  ボタンのアイコンの設定
-        Drawable image = getResources().getDrawable(R.drawable.edit_square_red);
+        Drawable image = getResources().getDrawable(R.mipmap.edit_square_red);
         INPUT_BUTTON.setCompoundDrawablesWithIntrinsicBounds(null, null, null, image);
 
         getFragmentManager().beginTransaction().replace(R.id.MainWindow, ISWindow).commit();
@@ -206,7 +194,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         MODE = MAP_SELECTION_MODE;
 
         //  ボタンのアイコンの設定
-        Drawable image = getResources().getDrawable(R.drawable.map_with_placeholder_red);
+        Drawable image = getResources().getDrawable(R.mipmap.map_with_placeholder_red);
         MAP_BUTTON.setCompoundDrawablesWithIntrinsicBounds(null, null, null, image);
 
         getFragmentManager().beginTransaction().replace(R.id.MainWindow, MSWindow).commit();
@@ -220,7 +208,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         MODE = TIMETABLE;
 
         //  ボタンのアイコンの設定
-        Drawable image = getResources().getDrawable(R.drawable.calendar_with_a_clock_time_tools_red);
+        Drawable image = getResources().getDrawable(R.mipmap.calendar_with_a_clock_time_tools_red);
         TIMETABLE_BUTTON.setCompoundDrawablesWithIntrinsicBounds(null, null, null, image);
 
         getFragmentManager().beginTransaction().replace(R.id.MainWindow, DTWindow).commit();
@@ -234,7 +222,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         MODE = LOCATION;
 
         //  ボタンのアイコンの設定
-        Drawable image = getResources().getDrawable(R.drawable.bus_side_view_red);
+        Drawable image = getResources().getDrawable(R.mipmap.bus_side_view_red);
         LOCATION_BUTTON.setCompoundDrawablesWithIntrinsicBounds(null, null, null, image);
 
         getFragmentManager().beginTransaction().replace(R.id.MainWindow, DSSWindow).commit();
@@ -246,7 +234,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         switch (MODE) {
             case INPUT_SELECTION_MODE:
                 try {
-                    image = getResources().getDrawable(R.drawable.edit_square_blue);
+                    image = getResources().getDrawable(R.mipmap.edit_square_blue);
                     INPUT_BUTTON.setCompoundDrawablesWithIntrinsicBounds(null, null, null, image);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -255,7 +243,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 }
             case MAP_SELECTION_MODE:
                 try {
-                    image = getResources().getDrawable(R.drawable.map_with_placeholder_blue);
+                    image = getResources().getDrawable(R.mipmap.map_with_placeholder_blue);
                     MAP_BUTTON.setCompoundDrawablesWithIntrinsicBounds(null, null, null, image);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -264,7 +252,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 }
             case TIMETABLE:
                 try {
-                    image = getResources().getDrawable(R.drawable.calendar_with_a_clock_time_tools_blue);
+                    image = getResources().getDrawable(R.mipmap.calendar_with_a_clock_time_tools_blue);
                     TIMETABLE_BUTTON.setCompoundDrawablesWithIntrinsicBounds(null, null, null, image);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -273,7 +261,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 }
             case LOCATION:
                 try {
-                    image = getResources().getDrawable(R.drawable.bus_side_view_blue);
+                    image = getResources().getDrawable(R.mipmap.bus_side_view_blue);
                     LOCATION_BUTTON.setCompoundDrawablesWithIntrinsicBounds(null, null, null, image);
                 } catch (Exception e) {
                     e.printStackTrace();

@@ -2,10 +2,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="5dp"
+    android:paddingLeft="5dp"
+    android:paddingRight="5dp"
+    android:paddingTop="5dp"
     tools:context=".MainActivity">
 
     <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
@@ -13,10 +13,10 @@
         android:id="@+id/cardViewMain"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="2dp"
-        android:layout_marginLeft="2dp"
-        android:layout_marginRight="2dp"
-        android:layout_marginTop="2dp"
+        android:layout_marginBottom="1dp"
+        android:layout_marginLeft="1dp"
+        android:layout_marginRight="1dp"
+        android:layout_marginTop="1dp"
         android:elevation="10dp"
         card_view:cardCornerRadius="2dp">
 
@@ -48,10 +48,11 @@
                         android:layout_width="wrap_content"
                         android:layout_height="fill_parent"
                         android:layout_weight="1"
-                        android:drawableBottom="@drawable/edit_square_blue"
+                        android:drawableBottom="@mipmap/edit_square_blue"
                         android:elevation="10dp"
                         android:gravity="center"
-                        android:text="入力選択" />
+                        android:text="Input mode"
+                        android:textSize="10dp"/>
 
                     <Button
                         android:id="@+id/MapSelection"
@@ -59,30 +60,33 @@
                         android:layout_height="fill_parent"
                         android:layout_weight="1"
 
-                        android:drawableBottom="@drawable/map_with_placeholder_blue"
+                        android:drawableBottom="@mipmap/map_with_placeholder_blue"
                         android:elevation="10dp"
                         android:gravity="center"
-                        android:text="地図選択" />
+                        android:text="Map mode"
+                        android:textSize="10dp"/>
 
                     <Button
                         android:id="@+id/Timetable"
                         android:layout_width="wrap_content"
                         android:layout_height="fill_parent"
                         android:layout_weight="1"
-                        android:drawableBottom="@drawable/calendar_with_a_clock_time_tools_blue"
+                        android:drawableBottom="@mipmap/calendar_with_a_clock_time_tools_blue"
                         android:elevation="10dp"
                         android:gravity="center"
-                        android:text="時刻表" />
+                        android:text="Timetable"
+                        android:textSize="10dp"/>
 
                     <Button
                         android:id="@+id/Location"
                         android:layout_width="wrap_content"
                         android:layout_height="fill_parent"
                         android:layout_weight="1"
-                        android:drawableBottom="@drawable/bus_side_view_blue"
+                        android:drawableBottom="@mipmap/bus_side_view_blue"
                         android:elevation="10dp"
                         android:gravity="center"
-                        android:text="位置情報" />
+                        android:text="Bus Location"
+                        android:textSize="10dp"/>
                 </LinearLayout>
             </android.support.v7.widget.CardView>
 

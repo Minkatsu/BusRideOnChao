@@ -15,49 +15,43 @@
         android:elevation="10dp"
         card_view:cardCornerRadius="2dp">
 
+        <ProgressBar
+            android:id="@+id/progress_bar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:indeterminate="true"
+            android:layout_gravity="center"
+            android:elevation="20dp"/>
+
         <FrameLayout
             android:id="@+id/MapView"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent">
 
-            <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:card_view="http://schemas.android.com/apk/res-auto"
-                android:id="@+id/cardViewMs2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="left|bottom"
-                android:layout_marginBottom="5dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
-                android:layout_marginTop="10dp"
-                android:elevation="10dp"
-                card_view:cardCornerRadius="2dp">
-
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:layout_gravity="left|bottom">
+                    android:layout_gravity="right|bottom"
+                    android:elevation="10dp">
 
                     <ImageButton
                         android:id="@+id/reset"
                         android:layout_width="50dp"
                         android:layout_height="50dp"
                         android:scaleType="centerInside"
-                        android:src="@drawable/update_button_blue"
+                        android:src="@mipmap/update_button_blue"
                         android:elevation="5dp"/>
-
 
                     <ImageButton
                         android:id="@+id/change"
                         android:layout_width="50dp"
                         android:layout_height="50dp"
                         android:scaleType="centerInside"
-                        android:src="@drawable/looping_arrows_red"
+                        android:src="@mipmap/looping_arrows_red"
                         android:elevation="5dp"/>
                 </LinearLayout>
 
-            </android.support.v7.widget.CardView>
 
         </FrameLayout>
     </android.support.v7.widget.CardView>

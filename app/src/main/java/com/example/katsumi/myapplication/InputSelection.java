@@ -1,7 +1,9 @@
 package com.example.katsumi.myapplication;
 
 import android.app.Fragment;
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -68,8 +70,8 @@ public class InputSelection extends Fragment {
 
                 setGetOnAutoCompleteTextView();
                 setGetOffAutoCompleteTextView();
-                getOnAutoCompleteTextView.setText(getOnBusStopName);
-                getOffAutoCompleteTextView.setText(getOffBusStopName);
+                getOnAutoCompleteTextView.setText("");
+                getOffAutoCompleteTextView.setText("");
             }
         });
 
@@ -80,8 +82,7 @@ public class InputSelection extends Fragment {
                 getOnBusStopName = getOnAutoCompleteTextView.getText().toString();
                 getOffBusStopName = getOffAutoCompleteTextView.getText().toString();
                 if (getOnBusStopName.length() != 0 || getOffBusStopName.length() != 0) {
-                    String swap = "";
-                    swap = getOnBusStopName;
+                    String swap = getOnBusStopName;
                     getOnBusStopName = getOffBusStopName;
                     getOffBusStopName = swap;
                     getOnAutoCompleteTextView.setText(getOnBusStopName);
@@ -100,7 +101,7 @@ public class InputSelection extends Fragment {
 
         try {
             //  テキストファイルから連結しているバス停のリストを取得
-            InputStream inputStream = getActivity().getResources().getAssets().open("connection_bus_stop.txt");
+            InputStream inputStream = getActivity().getResources().getAssets().open("BuStopLine.txt");
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
 
             for (int i = 0; (connectionData = bufferedReader.readLine()) != null; i++) {
