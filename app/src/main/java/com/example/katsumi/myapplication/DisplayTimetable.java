@@ -52,6 +52,25 @@ public class DisplayTimetable extends Fragment {
 
         setUp();
 
+        //  リセットボタンの設定
+        getActivity().findViewById(R.id.reset).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setUp();
+            }
+        });
+
+        // 入れ替えボタンの設定
+        getActivity().findViewById(R.id.swap).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mainActivity.getOnBusStopText.setText(getOffBusStopName);
+                mainActivity.getOffBusStopText.setText(getOnBusStopName);
+
+                setUp();
+            }
+        });
+
         return view;
     }
 

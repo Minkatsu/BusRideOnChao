@@ -11,12 +11,11 @@
         android:layout_height="match_parent"
         card_view:cardCornerRadius="2dp"
         android:layout_marginLeft="5dp"
-        android:layout_toLeftOf="@+id/buttonGroup"
-        android:layout_toEndOf="@+id/buttonGroup"
+        android:layout_marginRight="3dp"
         android:layout_alignTop="@+id/buttonGroup"
         android:layout_alignBottom="@+id/buttonGroup"
-        android:layout_centerInParent="true"
-        android:layout_alignParentStart="true">
+        android:layout_toLeftOf="@+id/go"
+        android:layout_toStartOf="@+id/go">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -25,20 +24,19 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true">
 
-
             <android.support.v7.widget.CardView
                 xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:card_view="http://schemas.android.com/apk/res-auto"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center"
-                android:layout_marginBottom="3dp"
-                android:layout_marginRight="3dp"
-                android:layout_marginLeft="3dp"
-                android:layout_marginTop="3dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
                 android:layout_centerVertical="true"
-                android:layout_toLeftOf="@+id/imageView4"
-                android:layout_toStartOf="@+id/imageView4">
+                android:layout_toLeftOf="@+id/allow"
+                android:layout_toStartOf="@+id/allow">
                 <RelativeLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content">
@@ -46,7 +44,6 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textAppearance="?android:attr/textAppearanceMedium"
                         android:text=""
                         android:gravity="center"
                         android:layout_gravity="center"
@@ -63,7 +60,7 @@
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/imageView4"
+                android:id="@+id/allow"
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"
                 android:src="@mipmap/right_straight_arrow_blue"/>
@@ -74,13 +71,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center"
-                android:layout_marginBottom="3dp"
-                android:layout_marginRight="3dp"
-                android:layout_marginLeft="3dp"
-                android:layout_marginTop="3dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
                 android:layout_alignParentTop="true"
-                android:layout_toRightOf="@+id/imageView4"
-                android:layout_toEndOf="@+id/imageView4">
+                android:layout_toRightOf="@+id/allow"
+                android:layout_toEndOf="@+id/allow">
 
                 <RelativeLayout
                     android:layout_width="wrap_content"
@@ -89,7 +86,6 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textAppearance="?android:attr/textAppearanceMedium"
                         android:text=""
                         android:id="@+id/getOffBusStopText"
                         android:layout_gravity="center"
@@ -102,22 +98,42 @@
             </android.support.v7.widget.CardView>
 
         </RelativeLayout>
-
     </android.support.v7.widget.CardView>
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/go"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        card_view:cardCornerRadius="2dp"
+        android:layout_alignTop="@+id/buttonGroup"
+        android:layout_alignBottom="@+id/buttonGroup"
+        android:layout_toLeftOf="@+id/buttonGroup"
+        android:layout_toStartOf="@+id/buttonGroup">
+
+        <Button
+            android:id="@+id/go_button"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:text="Go"/>
+
+        </android.support.v7.widget.CardView>
+
 
     <android.support.v7.widget.CardView
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:card_view="http://schemas.android.com/apk/res-auto"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="5dp"
-        android:layout_marginLeft="5dp"
+        android:layout_marginLeft="3dp"
+        android:layout_marginTop="3dp"
         android:layout_marginRight="5dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginBottom="3dp"
         card_view:cardCornerRadius="2dp"
         android:layout_alignParentRight="true"
-        android:layout_centerInParent="true"
-        android:id="@+id/buttonGroup">
+        android:id="@+id/buttonGroup"
+        android:layout_centerHorizontal="true">
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -125,7 +141,7 @@
             android:orientation="horizontal">
 
             <ImageButton
-                android:id="@+id/imageButton"
+                android:id="@+id/reset"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:scaleType="centerInside"
@@ -133,7 +149,7 @@
                 android:elevation="10dp"/>
 
             <ImageButton
-                android:id="@+id/imageButton2"
+                android:id="@+id/swap"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:scaleType="centerInside"

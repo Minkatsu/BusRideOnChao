@@ -8,30 +8,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_gravity="right|bottom"
-                    android:elevation="10dp">
-
-                    <ImageButton
-                        android:id="@+id/reset"
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
-                        android:scaleType="centerInside"
-                        android:src="@mipmap/update_button_blue"
-                        android:elevation="5dp"/>
-
-                    <ImageButton
-                        android:id="@+id/change"
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
-                        android:scaleType="centerInside"
-                        android:src="@mipmap/looping_arrows_red"
-                        android:elevation="5dp"/>
-                </LinearLayout>
-
             <ProgressBar
                 android:id="@+id/progress_bar"
                 android:layout_width="wrap_content"

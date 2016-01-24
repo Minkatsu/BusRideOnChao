@@ -10,7 +10,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -51,6 +50,25 @@ public class DisplayLocation extends Fragment {
 
         setUp();
 
+        //  リセットボタンの設定
+        getActivity().findViewById(R.id.reset).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setUp();
+            }
+        });
+
+        // 入れ替えボタンの設定
+        getActivity().findViewById(R.id.swap).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mainActivity.getOnBusStopText.setText(getOffBusStopName);
+                mainActivity.getOffBusStopText.setText(getOnBusStopName);
+
+                setUp();
+            }
+        });
+
         return view;
     }
 
@@ -58,6 +76,8 @@ public class DisplayLocation extends Fragment {
     private void setUp() {
         getOnBusStopName =  mainActivity.getOnBusStopText.getText().toString();
         getOffBusStopName = mainActivity.getOffBusStopText.getText().toString();
+
+        //Toast.makeText(getActivity(), getOnBusStopName +":"+getOffBusStopName, Toast.LENGTH_LONG).show();
 
         getLinkID();
 
@@ -72,7 +92,7 @@ public class DisplayLocation extends Fragment {
         getOffBusStopLinkID = mainActivity.mBusStopInformationList.BusStopNameToID(getOffBusStopName);
         getOffBusStopLinkID = mainActivity.mBusStopInformationList.IDToLinkID(getOffBusStopLinkID);
 
-        Toast.makeText(getActivity(), getOnBusStopName + getOnBusStopLinkID + getOffBusStopName + getOffBusStopLinkID, Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getActivity(), getOnBusStopName + getOnBusStopLinkID + getOffBusStopName + getOffBusStopLinkID, Toast.LENGTH_SHORT).show();
     }
 
 
@@ -148,10 +168,10 @@ public class DisplayLocation extends Fragment {
     void createListView(String text) {
         //  アイコンの設定
         Bitmap busStopImage, kenkoBusImage, kenhokuBusImage, otherBusImage;
-        busStopImage = BitmapFactory.decodeResource(getResources(), R.mipmap.bus_stop_location_mode);
-        kenkoBusImage = BitmapFactory.decodeResource(getResources(), R.mipmap.kenko_bus);
-        kenhokuBusImage = BitmapFactory.decodeResource(getResources(), R.mipmap.kenhoku_bus);
-        otherBusImage = BitmapFactory.decodeResource(getResources(), R.mipmap.other_bus);
+        busStopImage = BitmapFactory.decodeResource(getResources(), R.mipmap.bus_stop_point);
+        kenkoBusImage = BitmapFactory.decodeResource(getResources(), R.mipmap.bus_side_view_green);
+        kenhokuBusImage = BitmapFactory.decodeResource(getResources(), R.mipmap.bus_side_view_orange);
+        otherBusImage = BitmapFactory.decodeResource(getResources(), R.mipmap.bus_side_view_gray);
 
         //  データの作成
         List<CustomData> objects = new ArrayList<CustomData>();

@@ -16,7 +16,6 @@ import android.widget.Toast;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
-import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
@@ -61,9 +60,41 @@ public class MapSelection extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.map_selection_window, container, false);
 
-        getActivity().setTitle("Select The Bus Stops");
+        getActivity().setTitle("Select The Bus Stop");
 
         progressBar = (ProgressBar) view.findViewById(R.id.progress_bar);
+
+        //  リセットボタンの設定
+        getActivity().findViewById(R.id.reset).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getOnBusStopName = "";
+                getOffBusStopName = "";
+                setTitle();
+
+                new SetBusStopMarker(MapSelection.this, googleMap).execute();
+            }
+        });
+
+        // 入れ替えボタンの設定
+        getActivity().findViewById(R.id.swap).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getOnBusStopName = mainActivity.getOnBusStopText.getText().toString();
+                getOffBusStopName = mainActivity.getOffBusStopText.getText().toString();
+                mainActivity.getOnBusStopText.setText(getOffBusStopName);
+                mainActivity.getOffBusStopText.setText(getOnBusStopName);
+            }
+        });
+
+        getActivity().findViewById(R.id.go_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mainActivity.exceptionCheck() == mainActivity.SUCCESS) {
+                    mainActivity.changeToDisplayTimetableMode();
+                }
+            }
+        });
 
         //  マップの取得
         mMapFragment = MapFragment.newInstance();
@@ -76,7 +107,7 @@ public class MapSelection extends Fragment {
     public void onResume() {
         super.onResume();
 
-        mHandler.post(new setUpMap());
+        mHandler.post(new SetUpMap(this));
     }
 
     public synchronized void sleep(long mSec) {
@@ -98,64 +129,12 @@ public class MapSelection extends Fragment {
         }
     }
 
-    class setUpMap implements Runnable {
-        @Override
-        public void run() {
-            try {
-                mMapFragment = ((MapFragment) getFragmentManager().findFragmentById(R.id.MapView));
-                googleMap = mMapFragment.getMap();
-
-                mMapFragment.getMapAsync(new OnMapReadyCallback() {
-
-                    @Override
-                    public void onMapReady(GoogleMap googleMap) {
-                        setUpMapOptions();
-                    }
-                });
-            } catch (Exception e) {
-                // 10ms待ってもう一回実行
-                sleep(10);
-                new Handler().post(this);
-
-                e.printStackTrace();
-            }
-        }
-    }
-
     public void setUpMapOptions() {
         googleMap.setMyLocationEnabled(true);
 
         //  盛岡駅にズームして表示
         LatLng Morioka_sta = new LatLng(39.701683, 141.136369);
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(Morioka_sta, 15));
-
-        //  リセットボタンの設定
-        view.findViewById(R.id.reset).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                getOnBusStopName = "";
-                getOffBusStopName = "";
-
-                mainActivity.getOnBusStopText.setText("");
-                mainActivity.getOffBusStopText.setText("");
-                new SetBusStopMarker(MapSelection.this, googleMap).execute();
-            }
-        });
-
-        // 入れ替えボタンの設定
-        view.findViewById(R.id.change).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (getOnBusStopName.length() != 0 || getOffBusStopName.length() != 0) {
-                    String swap = getOnBusStopName;
-                    getOnBusStopName = getOffBusStopName;
-                    getOffBusStopName = swap;
-
-                    setTitle();
-                }
-            }
-        });
 
         //  バス停マーカーの設定
         new SetBusStopMarker(this, googleMap).execute();
@@ -172,7 +151,7 @@ public class MapSelection extends Fragment {
                         Toast.makeText(getActivity(), title + "を出発のバス停に設定しました", Toast.LENGTH_LONG).show();
                         getOffBusStopName = title;
                         setTitle();
-                        new getConnectionBusStopList(MapSelection.this, getOffBusStopName, googleMap).execute();
+                        new GetConnectionBusStopList(MapSelection.this, getOffBusStopName, googleMap).execute();
                     }
                 })
                 .setNeutralButton("キャンセル", new DialogInterface.OnClickListener() {
@@ -186,7 +165,7 @@ public class MapSelection extends Fragment {
                         Toast.makeText(getActivity(), title + "を到着のバス停に設定しました", Toast.LENGTH_LONG).show();
                         getOnBusStopName = title;
                         setTitle();
-                        new getConnectionBusStopList(MapSelection.this, getOnBusStopName, googleMap).execute();
+                        new GetConnectionBusStopList(MapSelection.this, getOnBusStopName, googleMap).execute();
                     }
                 })
                 .create()
@@ -201,8 +180,8 @@ public class MapSelection extends Fragment {
 
     public BitmapDescriptor setIcon() {
         try {
-            Bitmap OriginalBusStopIcon = BitmapFactory.decodeResource(getResources(), R.mipmap.bus_stop);
-            OriginalBusStopIcon = Bitmap.createScaledBitmap(OriginalBusStopIcon, 20, 44, false);
+            Bitmap OriginalBusStopIcon = BitmapFactory.decodeResource(getResources(), R.mipmap.bus_stop_point);
+            OriginalBusStopIcon = Bitmap.createScaledBitmap(OriginalBusStopIcon, 40, 40, false);
             BitmapDescriptor BusStopIcon = BitmapDescriptorFactory.fromBitmap(OriginalBusStopIcon);
             return BusStopIcon;
         } catch(Exception e ){

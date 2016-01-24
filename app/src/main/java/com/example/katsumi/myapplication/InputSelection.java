@@ -57,13 +57,13 @@ public class InputSelection extends Fragment {
         view = inflater.inflate(R.layout.input_selection_window, container, false);
 
         // タイトルの設定
-        getActivity().setTitle("Select The Bus Stops");
+        getActivity().setTitle("Select The Bus Stop");
 
         //  オートコンプリートの設定
         setAutoCompleteTextView();
 
         //  リセットボタンの設定
-        view.findViewById(R.id.reset).setOnClickListener(new View.OnClickListener() {
+        getActivity().findViewById(R.id.reset).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
@@ -72,29 +72,43 @@ public class InputSelection extends Fragment {
 
                 setGetOnAutoCompleteTextView();
                 setGetOffAutoCompleteTextView();
+
                 getOnAutoCompleteTextView.setText("");
                 getOffAutoCompleteTextView.setText("");
+
                 mainActivity.getOnBusStopText.setText("");
                 mainActivity.getOffBusStopText.setText("");
             }
         });
 
         // 入れ替えボタンの設定
-        view.findViewById(R.id.change).setOnClickListener(new View.OnClickListener() {
+        getActivity().findViewById(R.id.swap).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 setBusStop();
                 if (getOnBusStopName.length() != 0 || getOffBusStopName.length() != 0) {
-                    String swap = getOnBusStopName;
-                    getOnBusStopName = getOffBusStopName;
-                    getOffBusStopName = swap;
-                    getOnAutoCompleteTextView.setText(getOnBusStopName);
-                    getOffAutoCompleteTextView.setText(getOffBusStopName);
-                    mainActivity.getOnBusStopText.setText(getOnBusStopName);
-                    mainActivity.getOffBusStopText.setText(getOffBusStopName);
+
+                    getOnBusStopName = mainActivity.getOnBusStopText.getText().toString();
+                    getOffBusStopName = mainActivity.getOffBusStopText.getText().toString();
+
+                    mainActivity.getOnBusStopText.setText(getOffBusStopName);
+                    mainActivity.getOffBusStopText.setText(getOnBusStopName);
+
+                    getOnAutoCompleteTextView.setText(getOffBusStopName);
+                    getOffAutoCompleteTextView.setText(getOnBusStopName);
                 }
             }
         });
+
+        getActivity().findViewById(R.id.go_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mainActivity.exceptionCheck() == mainActivity.SUCCESS) {
+                    mainActivity.changeToDisplayTimetableMode();
+                }
+            }
+        });
+
         return view;
     }
 
@@ -210,6 +224,7 @@ public class InputSelection extends Fragment {
                     // ソフトキーボードを非表示にする
                     mainActivity.getOnBusStopText.setText(getOnBusStopName);
                     mainActivity.getOffBusStopText.setText(getOffBusStopName);
+
                     InputMethodManager imm
                             = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);

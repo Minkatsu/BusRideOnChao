@@ -11,13 +11,13 @@ import com.google.android.gms.maps.model.MarkerOptions;
 /**
  * Created by K.S. on 16/01/21.
  */
-public class getConnectionBusStopList extends AsyncTask<MarkerOptions, MarkerOptions, MarkerOptions[]> {
+public class GetConnectionBusStopList extends AsyncTask<MarkerOptions, MarkerOptions, MarkerOptions[]> {
 
     private MapSelection mapSelection;
     private GoogleMap googleMap;
     private String busStopName;
 
-    public getConnectionBusStopList(MapSelection mapSelection, String busStopName, GoogleMap googleMap) {
+    public GetConnectionBusStopList(MapSelection mapSelection, String busStopName, GoogleMap googleMap) {
         super();
         this.mapSelection = mapSelection;
         mapSelection.progressBar.setVisibility(View.VISIBLE);
