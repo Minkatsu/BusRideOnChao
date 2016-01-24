@@ -33,16 +33,22 @@ public class DisplayTimetable extends Fragment {
     View view;
     String TITLE;
 
+    MainActivity mainActivity;
+
     String getOnBusStopName, getOffBusStopName;
     int getOnBusStopLinkID, getOffBusStopLinkID;
-    BusStopInformationList information = new BusStopInformationList();
+
+    DisplayTimetable(MainActivity mainActivity){
+        this.mainActivity = mainActivity;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.display_timetable_window, container, false);
 
         TITLE = getActivity().getTitle().toString();
-        getActivity().setTitle("時刻表:" + TITLE.split(":")[1]);
+
+        getActivity().setTitle("Timetable");
 
         setUp();
 
@@ -55,8 +61,9 @@ public class DisplayTimetable extends Fragment {
     }
 
     private void setUp() {
-        getOnBusStopName = TITLE.split(":")[1].split("→")[0];
-        getOffBusStopName = TITLE.split(":")[1].split("→")[1];
+
+        getOnBusStopName =  mainActivity.getOnBusStopText.getText().toString();
+        getOffBusStopName = mainActivity.getOffBusStopText.getText().toString();
 
         getLinkID();
 
@@ -65,11 +72,11 @@ public class DisplayTimetable extends Fragment {
 
     //  LinkIDの取得
     private void getLinkID() {
-        getOnBusStopLinkID = information.BusStopNameToID(getOnBusStopName);
-        getOnBusStopLinkID = information.IDToLinkID(getOnBusStopLinkID);
+        getOnBusStopLinkID = mainActivity.mBusStopInformationList.BusStopNameToID(getOnBusStopName);
+        getOnBusStopLinkID = mainActivity.mBusStopInformationList.IDToLinkID(getOnBusStopLinkID);
 
-        getOffBusStopLinkID = information.BusStopNameToID(getOffBusStopName);
-        getOffBusStopLinkID = information.IDToLinkID(getOffBusStopLinkID);
+        getOffBusStopLinkID = mainActivity.mBusStopInformationList.BusStopNameToID(getOffBusStopName);
+        getOffBusStopLinkID = mainActivity.mBusStopInformationList.IDToLinkID(getOffBusStopLinkID);
     }
 
     //  HTMLソースの取得
@@ -196,7 +203,7 @@ public class DisplayTimetable extends Fragment {
             parentList.add(parentData);
             parentData.put(KEY1, "※該当するデータがありません");
             List<Map<String, String>> childData = new ArrayList<Map<String, String>>();
-            Map<String, String> childMap = new HashMap<String, String>();
+            //Map<String, String> childMap = new HashMap<String, String>();
             childList.add(childData);
         }
 

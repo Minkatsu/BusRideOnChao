@@ -1,21 +1,19 @@
 package com.example.katsumi.myapplication;
 
 import android.app.Fragment;
-import android.app.ProgressDialog;
 import android.content.Context;
-import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 
 public class InputSelection extends Fragment {
 
@@ -33,16 +31,17 @@ public class InputSelection extends Fragment {
     //  乗車・降車のバス停名
     String getOnBusStopName, getOffBusStopName;
 
-    //  バスの情報一覧
-    BusStopInformationList busStopInformationList;
+
+    MainActivity mainActivity;
+
+    InputSelection(MainActivity mainActivity){
+        this.mainActivity = mainActivity;
+    }
 
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        //  バス停名の登録
-        busStopInformationList = new BusStopInformationList();
 
         try {
             //連結しているバス停の取得
@@ -58,7 +57,7 @@ public class InputSelection extends Fragment {
         view = inflater.inflate(R.layout.input_selection_window, container, false);
 
         // タイトルの設定
-        getActivity().setTitle("バス停選択:");
+        getActivity().setTitle("Select The Bus Stops");
 
         //  オートコンプリートの設定
         setAutoCompleteTextView();
@@ -68,10 +67,15 @@ public class InputSelection extends Fragment {
             @Override
             public void onClick(View v) {
 
+                getOnBusStopName = "";
+                getOffBusStopName = "";
+
                 setGetOnAutoCompleteTextView();
                 setGetOffAutoCompleteTextView();
                 getOnAutoCompleteTextView.setText("");
                 getOffAutoCompleteTextView.setText("");
+                mainActivity.getOnBusStopText.setText("");
+                mainActivity.getOffBusStopText.setText("");
             }
         });
 
@@ -79,14 +83,15 @@ public class InputSelection extends Fragment {
         view.findViewById(R.id.change).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getOnBusStopName = getOnAutoCompleteTextView.getText().toString();
-                getOffBusStopName = getOffAutoCompleteTextView.getText().toString();
+                setBusStop();
                 if (getOnBusStopName.length() != 0 || getOffBusStopName.length() != 0) {
                     String swap = getOnBusStopName;
                     getOnBusStopName = getOffBusStopName;
                     getOffBusStopName = swap;
                     getOnAutoCompleteTextView.setText(getOnBusStopName);
                     getOffAutoCompleteTextView.setText(getOffBusStopName);
+                    mainActivity.getOnBusStopText.setText(getOnBusStopName);
+                    mainActivity.getOffBusStopText.setText(getOffBusStopName);
                 }
             }
         });
@@ -95,18 +100,10 @@ public class InputSelection extends Fragment {
 
     //  連結しているバス停の取得
     public void setConnectionData() throws IOException {
-        connectionBusStopList = new String[busStopInformationList.data.length + 1];
-
-        String connectionData;
-
+        connectionBusStopList = new String[mainActivity.mBusStopInformationList.data.length];
         try {
-            //  テキストファイルから連結しているバス停のリストを取得
-            InputStream inputStream = getActivity().getResources().getAssets().open("BuStopLine.txt");
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-
-            for (int i = 0; (connectionData = bufferedReader.readLine()) != null; i++) {
-                connectionBusStopList[i] = connectionData;
-            }
+            new GetBusLine(this,
+                    "https://raw.githubusercontent.com/Minkatsu/BusRideOnCiaoData/master/BusStopLine.txt").execute();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -127,9 +124,9 @@ public class InputSelection extends Fragment {
         getOnAutoCompleteTextView.setCompletionHint("Select Get On Bus Stop");
 
         //  バス停の一覧を取得
-        getOnBusStopList = new String[busStopInformationList.data.length];
+        getOnBusStopList = new String[mainActivity.mBusStopInformationList.data.length];
         for (int i = 0; i < getOnBusStopList.length; i++) {
-            getOnBusStopList[i] = busStopInformationList.data[i].BusStopName;
+            getOnBusStopList[i] = mainActivity.mBusStopInformationList.data[i].BusStopName;
         }
 
         //  ArrayAdapterの設定
@@ -140,16 +137,43 @@ public class InputSelection extends Fragment {
         getOnAutoCompleteTextView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View view, boolean flag) {
-                getOnBusStopName = getOnAutoCompleteTextView.getText().toString();
-                getOffBusStopName = getOffAutoCompleteTextView.getText().toString();
+                setBusStop();
                 if (flag) {
+                    mainActivity.getOnBusStopText.setText(getOnBusStopName);
+                    mainActivity.getOffBusStopText.setText(getOffBusStopName);
                     //  オートコンプリートの取得
                     getAutoCompleteArrayAdapter(view);
                 } else {
                     // ソフトキーボードを非表示にする
+                    mainActivity.getOnBusStopText.setText(getOnBusStopName);
+                    mainActivity.getOffBusStopText.setText(getOffBusStopName);
                     InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
                 }
+            }
+        });
+
+        getOnAutoCompleteTextView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                mainActivity.getOnBusStopText.setText((String) (parent.getItemAtPosition(position)));
+            }
+        });
+
+        getOnAutoCompleteTextView.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                mainActivity.getOnBusStopText.setText(s);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
             }
         });
     }
@@ -162,9 +186,9 @@ public class InputSelection extends Fragment {
         getOffAutoCompleteTextView.setCompletionHint("Select Get Off Bus Stop");
 
         //  バス停の一覧を取得
-        getOffBusStopList = new String[busStopInformationList.data.length];
+        getOffBusStopList = new String[mainActivity.mBusStopInformationList.data.length];
         for (int i = 0; i < getOffBusStopList.length; i++) {
-            getOffBusStopList[i] = busStopInformationList.data[i].BusStopName;
+            getOffBusStopList[i] = mainActivity.mBusStopInformationList.data[i].BusStopName;
         }
 
         //  ArrayAdapterの設定
@@ -176,17 +200,45 @@ public class InputSelection extends Fragment {
         getOffAutoCompleteTextView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View view, boolean flag) {
-                getOnBusStopName = getOnAutoCompleteTextView.getText().toString();
-                getOffBusStopName = getOffAutoCompleteTextView.getText().toString();
+                setBusStop();
                 if (flag) {
                     //  オートコンプリートの取得
+                    mainActivity.getOnBusStopText.setText(getOnBusStopName);
+                    mainActivity.getOffBusStopText.setText(getOffBusStopName);
                     getAutoCompleteArrayAdapter(view);
                 } else {
                     // ソフトキーボードを非表示にする
+                    mainActivity.getOnBusStopText.setText(getOnBusStopName);
+                    mainActivity.getOffBusStopText.setText(getOffBusStopName);
                     InputMethodManager imm
                             = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
                 }
+            }
+        });
+
+        getOffAutoCompleteTextView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                mainActivity.getOffBusStopText.setText((String) (parent.getItemAtPosition(position)));
+            }
+        });
+
+
+        getOffAutoCompleteTextView.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                mainActivity.getOffBusStopText.setText(s);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
             }
         });
     }
@@ -194,59 +246,67 @@ public class InputSelection extends Fragment {
     public void getAutoCompleteArrayAdapter(View view) {
         int ID;
         Integer connectionBusStopID[];
+        try {
+            switch (view.getId()) {
+                case R.id.SelectGetOff:
+                    //  乗車のバス停の名前が存在する場合
+                    if (mainActivity.mBusStopInformationList.BusStopNameToID(getOnBusStopName) != null) {
+                        ID = mainActivity.mBusStopInformationList.BusStopNameToID(getOnBusStopName);
+                        connectionBusStopID = new Integer[connectionBusStopList[ID].split(" ").length];
 
-        switch (view.getId()) {
-            case R.id.SelectGetOff:
-                //  乗車のバス停の名前が存在する場合
-                if (busStopInformationList.BusStopNameToID(getOnBusStopName) != null) {
-                    ID = busStopInformationList.BusStopNameToID(getOnBusStopName);
-                    connectionBusStopID = new Integer[connectionBusStopList[ID].split(" ").length];
+                        for (int i = 0; i < connectionBusStopID.length; i++) {
+                            connectionBusStopID[i] = Integer.parseInt(connectionBusStopList[ID].split(" ")[i]);
+                        }
 
-                    for (int i = 0; i < connectionBusStopID.length; i++) {
-                        connectionBusStopID[i] = Integer.parseInt(connectionBusStopList[ID].split(" ")[i]);
+                        getOffBusStopList = new String[connectionBusStopID.length - 1];
+                        for (int i = 1; i < connectionBusStopID.length; i++) {
+                            getOffBusStopList[i - 1] = mainActivity.mBusStopInformationList.data[connectionBusStopID[i]].BusStopName;
+                        }
+
+                        ArrayAdapter<String> getOffArrayAdapter
+                                = new ArrayAdapter<>(getActivity(), R.layout.auto_getoff_bus, getOffBusStopList);
+                        getOffAutoCompleteTextView.setAdapter(getOffArrayAdapter);
+
                     }
-
-                    getOffBusStopList = new String[connectionBusStopID.length - 1];
-                    for (int i = 1; i < connectionBusStopID.length; i++) {
-                        getOffBusStopList[i - 1] = busStopInformationList.data[connectionBusStopID[i]].BusStopName;
+                    //  乗車のバス停が入力されていない場合
+                    else if (getOnBusStopName.length() == 0) {
+                        setGetOffAutoCompleteTextView();
                     }
+                    break;
 
-                    ArrayAdapter<String> getOffArrayAdapter
-                            = new ArrayAdapter<>(getActivity(), R.layout.auto_getoff_bus, getOffBusStopList);
-                    getOffAutoCompleteTextView.setAdapter(getOffArrayAdapter);
+                case R.id.SelectGetOn:
+                    //  降車のバス停の名前が存在する場合
+                    if (mainActivity.mBusStopInformationList.BusStopNameToID(getOffBusStopName) != null) {
+                        ID = mainActivity.mBusStopInformationList.BusStopNameToID(getOffBusStopName);
 
-                }
-                //  乗車のバス停が入力されていない場合
-                else if (getOnBusStopName.length() == 0) {
-                    setGetOffAutoCompleteTextView();
-                }
-                break;
+                        connectionBusStopID = new Integer[connectionBusStopList[ID].split(" ").length];
+                        for (int i = 0; i < connectionBusStopID.length; i++) {
+                            connectionBusStopID[i] = Integer.parseInt(connectionBusStopList[ID].split(" ")[i]);
+                        }
 
-            case R.id.SelectGetOn:
-                //  降車のバス停の名前が存在する場合
-                if (busStopInformationList.BusStopNameToID(getOffBusStopName) != null) {
-                    ID = busStopInformationList.BusStopNameToID(getOffBusStopName);
+                        getOnBusStopList = new String[connectionBusStopID.length - 1];
+                        for (int i = 1; i < connectionBusStopID.length; i++) {
+                            getOnBusStopList[i - 1] = mainActivity.mBusStopInformationList.data[connectionBusStopID[i]].BusStopName;
+                        }
 
-                    connectionBusStopID = new Integer[connectionBusStopList[ID].split(" ").length];
-                    for (int i = 0; i < connectionBusStopID.length; i++) {
-                        connectionBusStopID[i] = Integer.parseInt(connectionBusStopList[ID].split(" ")[i]);
+                        ArrayAdapter<String> getOnArrayAdapter
+                                = new ArrayAdapter<>(getActivity(), R.layout.auto_geton_bus, getOnBusStopList);
+                        getOnAutoCompleteTextView.setAdapter(getOnArrayAdapter);
+
                     }
-
-                    getOnBusStopList = new String[connectionBusStopID.length - 1];
-                    for (int i = 1; i < connectionBusStopID.length; i++) {
-                        getOnBusStopList[i - 1] = busStopInformationList.data[connectionBusStopID[i]].BusStopName;
+                    //  乗車のバス停が入力されていない場合
+                    else if (getOffBusStopName.length() == 0) {
+                        setGetOnAutoCompleteTextView();
                     }
-
-                    ArrayAdapter<String> getOnArrayAdapter
-                            = new ArrayAdapter<>(getActivity(), R.layout.auto_geton_bus, getOnBusStopList);
-                    getOnAutoCompleteTextView.setAdapter(getOnArrayAdapter);
-
-                }
-                //  乗車のバス停が入力されていない場合
-                else if (getOffBusStopName.length() == 0) {
-                    setGetOnAutoCompleteTextView();
-                }
-                break;
+                    break;
+            }
+        } catch (Exception e){
+            e.printStackTrace();
         }
+    }
+
+    public void setBusStop(){
+        getOnBusStopName = getOnAutoCompleteTextView.getText().toString();
+        getOffBusStopName = getOffAutoCompleteTextView.getText().toString();
     }
 }

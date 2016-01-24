@@ -5,7 +5,6 @@ import android.app.Fragment;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.LayoutInflater;
@@ -21,12 +20,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 public class MapSelection extends Fragment {
 
     View view;
@@ -39,9 +33,6 @@ public class MapSelection extends Fragment {
     String getOnBusStopName = "";
     String getOffBusStopName = "";
 
-    //  バス停の情報一覧
-    BusStopInformationList busStopInformationList;
-
     //  連結しているバス停のリスト
     String connectionBusStopList[];
 
@@ -49,15 +40,18 @@ public class MapSelection extends Fragment {
 
     ProgressBar progressBar;
 
+    MainActivity mainActivity;
+
+    MapSelection(MainActivity mainActivity){
+        this.mainActivity = mainActivity;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        getOnBusStopName = "";
-        getOffBusStopName = "";
-
-        busStopInformationList = new BusStopInformationList();
+        getOnBusStopName =  mainActivity.getOnBusStopText.getText().toString();
+        getOffBusStopName = mainActivity.getOffBusStopText.getText().toString();
 
         //  連結しているバス停の取得
         setConnectionData();
@@ -67,7 +61,7 @@ public class MapSelection extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.map_selection_window, container, false);
 
-        getActivity().setTitle("バス停選択:");
+        getActivity().setTitle("Select The Bus Stops");
 
         progressBar = (ProgressBar) view.findViewById(R.id.progress_bar);
 
@@ -95,23 +89,14 @@ public class MapSelection extends Fragment {
 
     //  連結しているバス停のデータの取得
     public void setConnectionData() {
-        connectionBusStopList = new String[busStopInformationList.data.length + 1];
-
-        String connectionData;
-
+        connectionBusStopList = new String[mainActivity.mBusStopInformationList.data.length];
         try {
-            //  テキストファイルから連結しているバス停のリストを取得
-            InputStream inputStream = getActivity().getResources().getAssets().open("BusStopLine.txt");
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-
-            for (int i = 0; (connectionData = bufferedReader.readLine()) != null; i++) {
-                connectionBusStopList[i] = connectionData;
-            }
+            new GetBusLine(this,
+                    "https://raw.githubusercontent.com/Minkatsu/BusRideOnCiaoData/master/BusStopLine.txt").execute();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-
 
     class setUpMap implements Runnable {
         @Override
@@ -148,11 +133,13 @@ public class MapSelection extends Fragment {
         view.findViewById(R.id.reset).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!getActivity().getTitle().equals("バス停選択:")) {
-                    getActivity().setTitle("バス停選択:");
-                }
-                //setBusStopMarker();
-                new SetBusStopMarker(googleMap).execute();
+
+                getOnBusStopName = "";
+                getOffBusStopName = "";
+
+                mainActivity.getOnBusStopText.setText("");
+                mainActivity.getOffBusStopText.setText("");
+                new SetBusStopMarker(MapSelection.this, googleMap).execute();
             }
         });
 
@@ -164,15 +151,14 @@ public class MapSelection extends Fragment {
                     String swap = getOnBusStopName;
                     getOnBusStopName = getOffBusStopName;
                     getOffBusStopName = swap;
-                    getActivity().setTitle("バス停選択:" + getOnBusStopName + "→" + getOffBusStopName);
+
+                    setTitle();
                 }
             }
         });
 
         //  バス停マーカーの設定
-
-        //setBusStopMarker();
-        new SetBusStopMarker(googleMap).execute();
+        new SetBusStopMarker(this, googleMap).execute();
     }
 
     //  アラートダイアログの設定
@@ -186,7 +172,7 @@ public class MapSelection extends Fragment {
                         Toast.makeText(getActivity(), title + "を出発のバス停に設定しました", Toast.LENGTH_LONG).show();
                         getOffBusStopName = title;
                         setTitle();
-                        new getConnectionBusStopList(getOffBusStopName, googleMap).execute();
+                        new getConnectionBusStopList(MapSelection.this, getOffBusStopName, googleMap).execute();
                     }
                 })
                 .setNeutralButton("キャンセル", new DialogInterface.OnClickListener() {
@@ -200,7 +186,7 @@ public class MapSelection extends Fragment {
                         Toast.makeText(getActivity(), title + "を到着のバス停に設定しました", Toast.LENGTH_LONG).show();
                         getOnBusStopName = title;
                         setTitle();
-                        new getConnectionBusStopList(getOnBusStopName, googleMap).execute();
+                        new getConnectionBusStopList(MapSelection.this, getOnBusStopName, googleMap).execute();
                     }
                 })
                 .create()
@@ -209,7 +195,8 @@ public class MapSelection extends Fragment {
 
     //  タイトルの設定
     public void setTitle() {
-        getActivity().setTitle("バス停選択:" + getOnBusStopName + "→" + getOffBusStopName);
+        mainActivity.getOnBusStopText.setText(getOnBusStopName);
+        mainActivity.getOffBusStopText.setText(getOffBusStopName);
     }
 
     public BitmapDescriptor setIcon() {
@@ -223,118 +210,4 @@ public class MapSelection extends Fragment {
         }
     }
 
-    public class SetBusStopMarker extends AsyncTask<MarkerOptions, MarkerOptions, MarkerOptions[]> {
-
-        private GoogleMap googleMap;
-
-        public SetBusStopMarker(GoogleMap googleMap) {
-            super();
-            progressBar.setVisibility(View.VISIBLE);
-            this.googleMap = googleMap;
-            googleMap.clear();
-        }
-
-        @Override
-        protected MarkerOptions[] doInBackground(MarkerOptions marker[]) {
-
-            getOnBusStopName = "";
-            getOffBusStopName = "";
-
-            marker = new MarkerOptions[busStopInformationList.data.length];
-
-            //  マーカーの設定
-            for (int i = 0; i < marker.length; i++) {
-                MarkerOptions markerOptions = new MarkerOptions();
-
-                //  マーカーのタイトル、位置情報の設定
-                markerOptions.title(busStopInformationList.data[i].BusStopName);
-                LatLng position
-                        = new LatLng(busStopInformationList.data[i].latitude, busStopInformationList.data[i].longitude);
-                markerOptions.position(position);
-                markerOptions.icon(setIcon());
-
-                marker[i] = markerOptions;
-            }
-
-            return marker;
-        }
-
-        @Override
-        protected void onPostExecute(MarkerOptions markerOptions[]) {
-            for (int i = 0; i < markerOptions.length; i++) {
-                googleMap.addMarker(markerOptions[i]);
-            }
-
-            googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-                @Override
-                public boolean onMarkerClick(Marker marker) {
-                    setMarkerClickEvent(marker.getTitle());
-
-                    return false;
-                }
-            });
-            progressBar.setVisibility(View.INVISIBLE);
-        }
-    }
-
-    public class getConnectionBusStopList extends AsyncTask<MarkerOptions, MarkerOptions, MarkerOptions[]> {
-
-        private GoogleMap googleMap;
-        private String busStopName;
-
-        public getConnectionBusStopList(String busStopName, GoogleMap googleMap){
-            super();
-            progressBar.setVisibility(View.VISIBLE);
-
-            this.busStopName = busStopName;
-            this.googleMap = googleMap;
-
-            googleMap.clear();
-        }
-
-        @Override
-        protected MarkerOptions[] doInBackground(MarkerOptions marker[]) {
-
-            int ID = busStopInformationList.BusStopNameToID(busStopName);
-
-            Integer connectionBusStopID[] = new Integer[connectionBusStopList[ID].split(" ").length];
-            for (int i = 0; i < connectionBusStopID.length; i++) {
-                connectionBusStopID[i] = Integer.parseInt(connectionBusStopList[ID].split(" ")[i]);
-            }
-
-            marker = new MarkerOptions[connectionBusStopID.length];
-
-            for (int i = 1; i < marker.length; i++) {
-                MarkerOptions markerOptions = new MarkerOptions();
-                markerOptions.title(busStopInformationList.data[connectionBusStopID[i]].BusStopName);
-                LatLng position = new LatLng(busStopInformationList.data
-                        [connectionBusStopID[i]].latitude, busStopInformationList.data[connectionBusStopID[i]].longitude);
-                markerOptions.position(position);
-
-                //  アイコンの設定
-                markerOptions.icon(setIcon());
-
-                marker[i] = markerOptions;
-            }
-
-            return marker;
-        }
-
-        @Override
-        protected void onPostExecute(MarkerOptions markerOptions[]) {
-            for (int i = 1; i < markerOptions.length; i++) {
-                googleMap.addMarker(markerOptions[i]);
-            }
-
-            googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-                @Override
-                public boolean onMarkerClick(Marker marker) {
-                    setMarkerClickEvent(marker.getTitle());
-
-                    return false;
-                }
-            });
-            progressBar.setVisibility(View.INVISIBLE);
-        }
-    }
 }

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/left_draw"
+    android:layout_width="240dp"
+    android:layout_height="match_parent"
+    android:layout_gravity="start"
+    android:elevation="10dp">
+
+    <LinearLayout
+        android:id="@+id/left_drawer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:elevation="1dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/menu"
+            android:textSize="@dimen/abc_text_size_display_1_material"
+            android:layout_gravity="center"
+            android:textColor="#ffffff"/>
+
+        <Button
+            android:id="@+id/InputSelection"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableLeft="@mipmap/edit_square_blue"
+            android:gravity="center"
+            android:text="@string/input_string"/>
+
+        <Button
+            android:id="@+id/MapSelection"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableLeft="@mipmap/map_with_placeholder_blue"
+            android:gravity="center"
+            android:text="@string/map_string" />
+
+        <Button
+            android:id="@+id/Timetable"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableLeft="@mipmap/calendar_with_a_clock_time_tools_blue"
+            android:gravity="center"
+            android:text="@string/timetable_string"/>
+
+        <Button
+            android:id="@+id/Location"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableLeft="@mipmap/bus_side_view_blue"
+            android:gravity="center"
+            android:text="@string/location_string"/>
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/dummy_drawer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/primary_dark"
+        android:alpha="0.5">
+    </RelativeLayout>
+
+
+
+</RelativeLayout>

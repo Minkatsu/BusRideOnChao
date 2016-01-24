@@ -1,7 +1,6 @@
 package com.example.katsumi.myapplication;
 
 import android.app.Fragment;
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -10,10 +9,7 @@ import android.os.StrictMode;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.BufferedReader;
@@ -35,7 +31,11 @@ public class DisplayLocation extends Fragment {
     String getOnBusStopName, getOffBusStopName;
     int getOnBusStopLinkID, getOffBusStopLinkID;
 
-    BusStopInformationList busStopInformationList = new BusStopInformationList();
+    MainActivity mainActivity;
+
+    DisplayLocation(MainActivity mainActivity){
+        this.mainActivity = mainActivity;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -47,7 +47,7 @@ public class DisplayLocation extends Fragment {
         view = inflater.inflate(R.layout.display_location_window, container, false);
 
         TITLE = getActivity().getTitle().toString();
-        getActivity().setTitle("位置情報:" + TITLE.split(":")[1]);
+        getActivity().setTitle("Bus Location");
 
         setUp();
 
@@ -56,8 +56,8 @@ public class DisplayLocation extends Fragment {
 
     //  準備
     private void setUp() {
-        getOnBusStopName = TITLE.split(":")[1].split("→")[0];
-        getOffBusStopName = TITLE.split(":")[1].split("→")[1];
+        getOnBusStopName =  mainActivity.getOnBusStopText.getText().toString();
+        getOffBusStopName = mainActivity.getOffBusStopText.getText().toString();
 
         getLinkID();
 
@@ -66,11 +66,11 @@ public class DisplayLocation extends Fragment {
 
     //  LinkIDの取得
     private void getLinkID() {
-        getOnBusStopLinkID = busStopInformationList.BusStopNameToID(getOnBusStopName);
-        getOnBusStopLinkID = busStopInformationList.IDToLinkID(getOnBusStopLinkID);
+        getOnBusStopLinkID = mainActivity.mBusStopInformationList.BusStopNameToID(getOnBusStopName);
+        getOnBusStopLinkID = mainActivity.mBusStopInformationList.IDToLinkID(getOnBusStopLinkID);
 
-        getOffBusStopLinkID = busStopInformationList.BusStopNameToID(getOffBusStopName);
-        getOffBusStopLinkID = busStopInformationList.IDToLinkID(getOffBusStopLinkID);
+        getOffBusStopLinkID = mainActivity.mBusStopInformationList.BusStopNameToID(getOffBusStopName);
+        getOffBusStopLinkID = mainActivity.mBusStopInformationList.IDToLinkID(getOffBusStopLinkID);
 
         Toast.makeText(getActivity(), getOnBusStopName + getOnBusStopLinkID + getOffBusStopName + getOffBusStopLinkID, Toast.LENGTH_SHORT).show();
     }
@@ -97,7 +97,8 @@ public class DisplayLocation extends Fragment {
             BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
 
             // データの編集
-            String preSource = new String(), postSource = new String();
+
+            String preSource, postSource = new String();
             while ((preSource = bufferedReader.readLine()) != null) {
                 postSource += ArrangeSource(preSource);
             }
@@ -141,83 +142,6 @@ public class DisplayLocation extends Fragment {
             return "該当するデータがありません";
         else
             return "";
-    }
-
-    //  ListViewの情報の格納・取得
-    public class CustomData {
-        private Bitmap imageData_;
-        private String textData_;
-        private String space_;
-        private int color_;
-
-        public void setImageData(Bitmap image) {
-            imageData_ = image;
-        }
-
-        public Bitmap getImageData() {
-            return imageData_;
-        }
-
-        public void setTextData(String text) {
-            textData_ = text;
-        }
-
-        public String getTextData() {
-            return textData_;
-        }
-
-        public void setSpace(String space) {
-            space_ = space;
-        }
-
-        public String getSpace() {
-            return space_;
-        }
-
-        public void setColor(int color) {
-            color_ = color;
-        }
-
-        public int getColor() {
-            return color_;
-        }
-    }
-
-    //  ListViewのWidgetの設定
-    public class CustomAdapter extends ArrayAdapter<CustomData> {
-        private LayoutInflater layoutInflater_;
-
-        public CustomAdapter(Context context, int textViewResourceId, List<CustomData> objects) {
-            super(context, textViewResourceId, objects);
-            layoutInflater_ = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            // 特定の行(position)のデータを得る
-            CustomData item = (CustomData) getItem(position);
-
-            // convertViewは使い回しされている可能性があるのでnullの時だけ新しく作る
-            if (null == convertView) {
-                convertView = layoutInflater_.inflate(R.layout.custom_list_layout, null);
-            }
-
-            // CustomDataのデータをViewの各Widgetにセットする
-            TextView space;
-            space = (TextView) convertView.findViewById(R.id.textView5);
-            space.setText(item.getSpace());
-
-            ImageView imageView;
-            imageView = (ImageView) convertView.findViewById(R.id.image);
-            imageView.setImageBitmap(item.getImageData());
-
-            TextView textView;
-            textView = (TextView) convertView.findViewById(R.id.textView6);
-            textView.setText(item.getTextData());
-            textView.setTextColor(item.getColor());
-
-            return convertView;
-        }
     }
 
     //  ListViewの出力
