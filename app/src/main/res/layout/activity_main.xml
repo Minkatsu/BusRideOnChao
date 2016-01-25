@@ -15,7 +15,8 @@
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
         android:layout_marginTop="5dp"
-        card_view:cardCornerRadius="2dp">
+        card_view:cardCornerRadius="2dp"
+        android:elevation="5dp">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -39,7 +40,8 @@
                     android:layout_marginLeft="5dp"
                     android:layout_marginRight="5dp"
                     android:layout_marginTop="5dp"
-                    card_view:cardCornerRadius="2dp" />
+                    card_view:cardCornerRadius="2dp"
+                    android:elevation="5dp"/>
 
             </RelativeLayout>
 
@@ -47,6 +49,7 @@
 
     </android.support.v7.widget.CardView>
 
-    <include layout="@layout/drawer_main" />
+    <include
+        layout="@layout/drawer_main" />
 
 </android.support.v4.widget.DrawerLayout>

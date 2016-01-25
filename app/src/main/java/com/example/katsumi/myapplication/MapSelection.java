@@ -10,6 +10,9 @@ import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationSet;
+import android.view.animation.RotateAnimation;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -84,6 +87,18 @@ public class MapSelection extends Fragment {
                 getOffBusStopName = mainActivity.getOffBusStopText.getText().toString();
                 mainActivity.getOnBusStopText.setText(getOffBusStopName);
                 mainActivity.getOffBusStopText.setText(getOnBusStopName);
+
+                ImageView dots = (ImageView) getActivity().findViewById(R.id.allow);
+                AnimationSet set = new AnimationSet(true);
+
+                RotateAnimation rotate = new RotateAnimation(0, 180, dots.getWidth()/2, dots.getHeight()/2);
+                set.addAnimation(rotate);
+                set.setFillAfter(true);
+
+
+
+                set.setDuration(300); // 300msかけてアニメーションする
+                dots.startAnimation(set); // アニメーション適用
             }
         });
 

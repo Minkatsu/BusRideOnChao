@@ -3,15 +3,24 @@ package com.example.katsumi.myapplication;
 import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.v7.widget.CardView;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
+import android.view.animation.RotateAnimation;
+import android.view.animation.ScaleAnimation;
+import android.view.animation.TranslateAnimation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
 import java.io.IOException;
 
@@ -66,7 +75,6 @@ public class InputSelection extends Fragment {
         getActivity().findViewById(R.id.reset).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 getOnBusStopName = "";
                 getOffBusStopName = "";
 
@@ -85,18 +93,26 @@ public class InputSelection extends Fragment {
         getActivity().findViewById(R.id.swap).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                ImageView dots = (ImageView) getActivity().findViewById(R.id.allow);
+                AnimationSet set = new AnimationSet(true);
+                RotateAnimation rotate = new RotateAnimation(0, 180, dots.getWidth()/2, dots.getHeight()/2);
+
+                set.addAnimation(rotate);
+                set.setFillAfter(true);
+
+                set.setDuration(300); // 3000msかけてアニメーションする
+                set.addAnimation(dots.getAnimation());
+
                 setBusStop();
-                if (getOnBusStopName.length() != 0 || getOffBusStopName.length() != 0) {
+                getOnBusStopName = mainActivity.getOnBusStopText.getText().toString();
+                getOffBusStopName = mainActivity.getOffBusStopText.getText().toString();
 
-                    getOnBusStopName = mainActivity.getOnBusStopText.getText().toString();
-                    getOffBusStopName = mainActivity.getOffBusStopText.getText().toString();
+                mainActivity.getOnBusStopText.setText(getOffBusStopName);
+                mainActivity.getOffBusStopText.setText(getOnBusStopName);
 
-                    mainActivity.getOnBusStopText.setText(getOffBusStopName);
-                    mainActivity.getOffBusStopText.setText(getOnBusStopName);
-
-                    getOnAutoCompleteTextView.setText(getOffBusStopName);
-                    getOffAutoCompleteTextView.setText(getOnBusStopName);
-                }
+                getOnAutoCompleteTextView.setText(getOffBusStopName);
+                getOffAutoCompleteTextView.setText(getOnBusStopName);
             }
         });
 

@@ -9,6 +9,9 @@ import android.os.StrictMode;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationSet;
+import android.view.animation.RotateAnimation;
+import android.widget.ImageView;
 import android.widget.ListView;
 
 import java.io.BufferedReader;
@@ -64,6 +67,16 @@ public class DisplayLocation extends Fragment {
             public void onClick(View v) {
                 mainActivity.getOnBusStopText.setText(getOffBusStopName);
                 mainActivity.getOffBusStopText.setText(getOnBusStopName);
+
+                ImageView dots = (ImageView) getActivity().findViewById(R.id.allow);
+                AnimationSet set = new AnimationSet(true);
+
+                RotateAnimation rotate = new RotateAnimation(0, 180, dots.getWidth()/2, dots.getHeight()/2);
+                set.addAnimation(rotate);
+                set.setFillAfter(true);
+
+                set.setDuration(300); // 3000msかけてアニメーションする
+                dots.startAnimation(set); // アニメーション適用
 
                 setUp();
             }

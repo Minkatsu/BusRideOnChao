@@ -8,10 +8,16 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationSet;
+import android.view.animation.DecelerateInterpolator;
+import android.view.animation.RotateAnimation;
+import android.widget.AdapterView;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
+import android.widget.ImageView;
 import android.widget.SimpleExpandableListAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -66,6 +72,16 @@ public class DisplayTimetable extends Fragment {
             public void onClick(View v) {
                 mainActivity.getOnBusStopText.setText(getOffBusStopName);
                 mainActivity.getOffBusStopText.setText(getOnBusStopName);
+
+                ImageView dots = (ImageView) getActivity().findViewById(R.id.allow);
+                AnimationSet set = new AnimationSet(true);
+
+                RotateAnimation rotate = new RotateAnimation(0, 180, dots.getWidth()/2, dots.getHeight()/2);
+                set.addAnimation(rotate);
+                set.setFillAfter(true);
+
+                set.setDuration(300); // 3000msかけてアニメーションする
+                dots.startAnimation(set); // アニメーション適用
 
                 setUp();
             }
@@ -233,6 +249,7 @@ public class DisplayTimetable extends Fragment {
                 new String[]{KEY1}, new int[]{R.id.text1},
                 childList, R.layout.simple_expandable_list_item,
                 new String[]{KEY2}, new int[]{R.id.text1}) {
+
             @Override
             public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
                 final View itemRenderer = super.getChildView(groupPosition, childPosition, isLastChild, convertView, parent);
@@ -258,5 +275,14 @@ public class DisplayTimetable extends Fragment {
 
         ExpandableListView listView = (ExpandableListView) view.findViewById(R.id.expandableListView);
         listView.setAdapter(adapter);
+
+        listView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
+            @Override
+            public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
+                Toast.makeText(getActivity(), "asd", Toast.LENGTH_LONG).show();
+                return false;
+            }
+        });
+
     }
 }
