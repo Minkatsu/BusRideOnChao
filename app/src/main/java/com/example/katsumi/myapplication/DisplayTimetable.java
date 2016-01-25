@@ -275,14 +275,5 @@ public class DisplayTimetable extends Fragment {
 
         ExpandableListView listView = (ExpandableListView) view.findViewById(R.id.expandableListView);
         listView.setAdapter(adapter);
-
-        listView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
-            @Override
-            public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
-                Toast.makeText(getActivity(), "asd", Toast.LENGTH_LONG).show();
-                return false;
-            }
-        });
-
     }
 }
